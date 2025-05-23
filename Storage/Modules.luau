@@ -6,12 +6,14 @@ local _StG = game:GetService("StarterGui")
 -- 《Modules》 --
 local Modules = {}
 
-Modules.bringpart = function(name)
+Modules.bringpart = function(name, optionals)
   for i, v in pairs(game:GetDescendants()) do
     if (v:IsA("BasePart") or v:IsA("Part")) and v.Name == name then
       local player = _Plrs.LocalPlayer
       if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         local hrp = player.Character.HumanoidRootPart
+        v.CanCollide = false
+        v.Anchored = optionals
         v.CFrame = CFrame.new(hrp.Position)
       end
     end
