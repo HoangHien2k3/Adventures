@@ -6,6 +6,8 @@ local _CG = game:GetService("CoreGui")
 local _TxtCS = game:GetService("TextChatService")
 local _DefCS = game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents")
 
+local _CurrentCamera = _Ws.CurrentCamera
+
 -- 《Modules》 --
 local Modules = {}
 
@@ -91,6 +93,12 @@ end
 Modules.DevConsole = function()
     if _CG:FindFirstChild("DeveloperConsole") == nil then
         _StG:SetCore("DevConsoleVisible", true)
+    end
+end
+
+Modules.ViewPlayer = function(plrs)
+    if _Plrs[plrs] and _Plrs[plrs].Character and _Plrs[plrs].Character:FindFirstChild("HumanoidRootPart") then
+        _CurrentCamera.CameraSubject = _Plrs[plrs].Character.Humanoid or _Plrs[plrs].Character.HumanoidRootPart
     end
 end
 
