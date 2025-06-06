@@ -2,13 +2,37 @@
 local _Ws = game:GetService("Workspace")
 local _Plrs = game:GetService("Players")
 local _StG = game:GetService("StarterGui")
+local _CG = game:GetService("CoreGui")
 local _TxtCS = game:GetService("TextChatService")
 local _DefCS = game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents")
 
 -- 《Modules》 --
 local Modules = {}
 
-Modules.bringpart = function(name : String, optionals : Boolean)
+Modules.RandomString = function(length : Number)
+    local chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+    local randomString = ""
+    
+    for i = 1, length do
+        local randomIndex = math.random(1, #chars)
+        randomString = randomString .. chars:sub(randomIndex, randomIndex)
+    end
+    
+    return randomString
+end
+
+Modules.CorrectName = function(plr_name : String)
+    for i, v in ipairs(_Plrs:GetPlayers()) do
+        if string.lower(v.Name):sub(1, #plr_name) == string.lower(plr_name) or
+        string.lower(v.DisplayName):sub(1, #plr_name) == string.lower(plr_name) then
+            return v
+        end
+    end
+    print("[Output Result]: " .. v.Name .. "| " .. v.DisplayName)
+    return nil
+end
+
+Modules.BringPart = function(name : String, optionals : Boolean)
   for i, v in pairs(game:GetDescendants()) do
     if (v:IsA("BasePart") or v:IsA("Part")) and v.Name == name then
       local player = _Plrs.LocalPlayer
@@ -22,7 +46,7 @@ Modules.bringpart = function(name : String, optionals : Boolean)
   end
 end
 
-Modules.countplayers = function()
+Modules.CountPlayers = function()
   local count = 0
   for i, v in pairs(_Plrs:GetPlayers()) do
     print("Player: " .. v.Name .. ", DisplayName: " .. v.DisplayName)
@@ -31,7 +55,7 @@ Modules.countplayers = function()
   return count
 end
 
-Modules.sendmsg = function(_string : String)
+Modules.Chatted = function(_string : String)
     local _string = tostring(_string)
     if _DefCS then
         _DefCS.SayMessageRequest:FireServer(_string, "All")
@@ -43,7 +67,7 @@ Modules.sendmsg = function(_string : String)
     end
 end
 
-Modules.notify = function(tl : String, txt : String)
+Modules.Notification = function(tl : String, txt : String)
   _StG:SetCore("SendNotification", {
     Title = tl,
     Text = txt,
@@ -51,7 +75,34 @@ Modules.notify = function(tl : String, txt : String)
   })
 end
 
-Modules.Input_E = function(data : String)
+Modules.ButtonNotification = function(title : String, text : String, duration : Number, btnText1 : String, btnText2 : String, script : Function)
+    _StG:SetCore("SendNotification", {
+        Title = title,
+        Text = text,
+        Duration = duration,
+        Button1 = btnText1,
+        Callback = function()
+            script()
+        end,
+        Button2 = btnText2,
+    })
+end
+
+Modules.DevConsole = function()
+    if _CG:FindFirstChild("DeveloperConsole") == nil then
+        _StG:SetCore("DevConsoleVisible", true)
+    end
+end
+
+Modules.TP = function(local_plr : String, plr_name : String)
+    if _Plrs[plr_name] and _Plrs[plr_name].Character and _Plrs[plr_name].Character:FindFirstChild("HumanoidRootPart") then
+        _Plrs[local_plr].Character:SetPrimaryPartCFrame(_Plrs[plr_name].Character.HumanoidRootPart)
+    else
+        print("[Output-Teleportation]: " .. plr_name .. " does not exist a humanoidrootpart!")
+    end
+end
+
+Modules.B64Encode_Input = function(data : String)
     local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
     --local b = 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん'
     return ((data:gsub('.', function(x) 
@@ -66,7 +117,7 @@ Modules.Input_E = function(data : String)
     end)..({ '', '==', '=' })[#data%3+1])
 end
  
-Modules.Output_E = function(data : String)
+Modules.B64Decode_Input = function(data : String)
     local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
     --local b = 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん'
     data = string.gsub(data, '[^'..b..'=]', '')
