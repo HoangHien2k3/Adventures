@@ -2,11 +2,13 @@
 local _Ws = game:GetService("Workspace")
 local _Plrs = game:GetService("Players")
 local _StG = game:GetService("StarterGui")
+local _TxtCS = game:GetService("TextChatService")
+local _DefCS = game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents")
 
 -- 《Modules》 --
 local Modules = {}
 
-Modules.bringpart = function(name, optionals)
+Modules.bringpart = function(name : String, optionals : Boolean)
   for i, v in pairs(game:GetDescendants()) do
     if (v:IsA("BasePart") or v:IsA("Part")) and v.Name == name then
       local player = _Plrs.LocalPlayer
@@ -29,7 +31,19 @@ Modules.countplayers = function()
   return count
 end
 
-Modules.notify = function(tl, txt)
+Modules.sendmsg = function(_string : String)
+    local _string = tostring(_string)
+    if _DefCS then
+        _DefCS.SayMessageRequest:FireServer(_string, "All")
+    elseif _TxtCS then
+        local _x = _TxtCS.TextChannels.RBXGeneral
+        if _x then
+            _x:SendAsync(_string)
+        end
+    end
+end
+
+Modules.notify = function(tl : String, txt : String)
   _StG:SetCore("SendNotification", {
     Title = tl,
     Text = txt,
@@ -37,7 +51,7 @@ Modules.notify = function(tl, txt)
   })
 end
 
-Modules.Input_E = function(data)
+Modules.Input_E = function(data : String)
     local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
     --local b = 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん'
     return ((data:gsub('.', function(x) 
@@ -52,7 +66,7 @@ Modules.Input_E = function(data)
     end)..({ '', '==', '=' })[#data%3+1])
 end
  
-Modules.Output_E = function(data)
+Modules.Output_E = function(data : String)
     local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
     --local b = 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん'
     data = string.gsub(data, '[^'..b..'=]', '')
