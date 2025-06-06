@@ -9,6 +9,7 @@ local _DefCS = game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatS
 local _CurrentCamera = _Ws.CurrentCamera
 
 -- 《Modules》 --
+_G.StuffInStorage = {}
 local Modules = {}
 
 Modules.RandomString = function(length : Number)
@@ -96,7 +97,7 @@ Modules.DevConsole = function()
     end
 end
 
-Modules.ViewPlayer = function(plrs)
+Modules.ViewPlayer = function(plrs : String)
     if _Plrs[plrs] and _Plrs[plrs].Character and _Plrs[plrs].Character:FindFirstChild("HumanoidRootPart") then
         _CurrentCamera.CameraSubject = _Plrs[plrs].Character.Humanoid or _Plrs[plrs].Character.HumanoidRootPart
     end
